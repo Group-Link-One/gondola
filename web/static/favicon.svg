@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <defs>
+    <style>
+      <![CDATA[
+      .bg {
+        fill: #0f172a;
+        rx: 56px;
+      }
+
+      .track {
+        fill: none;
+        stroke: #e2e8f0;
+        stroke-width: 16;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .node {
+        stroke: #0f172a;
+        stroke-width: 4;
+      }
+
+      .payload {
+        fill: #ffffff;
+        stroke: #0f172a;
+        stroke-width: 3;
+        filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.9));
+      }
+      ]]>
+    </style>
+  </defs>
+
+  <!-- Container for universal tab visibility (Dark/Light themes) -->
+  <rect class="bg" width="256" height="256" />
+
+  <!-- Centered & Scaled 'G' Pipeline Group -->
+  <g transform="translate(128, 128) scale(1.12) translate(-135, -155)">
+    
+    <!-- Git-Branch Pipeline Track -->
+    <path class="track" d="M 230 80 L 130 80 C 70 80, 40 115, 40 155 C 40 195, 70 230, 130 230 L 205 230 C 220 230, 230 220, 230 205 L 230 180 C 230 165, 220 155, 205 155 L 140 155" />
+
+    <!-- Environment Nodes -->
+    <!-- Build Registry -->
+    <circle class="node" cx="210" cy="80" r="13" fill="#38bdf8" />
+    
+    <!-- LLM Risk Assessment -->
+    <circle class="node" cx="40" cy="155" r="13" fill="#a78bfa" />
+    
+    <!-- Staging Environment -->
+    <circle class="node" cx="180" cy="230" r="13" fill="#fbbf24" />
+    
+    <!-- Production Target -->
+    <circle class="node" cx="140" cy="155" r="15" fill="#34d399" />
+
+    <!-- Animated Data Payload -->
+    <circle class="payload" r="9">
+      <animateMotion 
+        dur="3.5s" 
+        repeatCount="indefinite" 
+        calcMode="spline"
+        keyTimes="0; 1"
+        keySplines="0.4 0 0.2 1"
+        path="M 230 80 L 130 80 C 70 80, 40 115, 40 155 C 40 195, 70 230, 130 230 L 205 230 C 220 230, 230 220, 230 205 L 230 180 C 230 165, 220 155, 205 155 L 140 155" />
+    </circle>
+
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  deploy-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DEPLOY_API_KEY=${DEPLOY_API_KEY:-change-me-in-production}
+      - CF_API_KEY=${CF_API_KEY:-}
+      - CONFIG_PATH=/app/config.yaml
+      # Ollama can be configured via environment or config.yaml
+      # Point to your external Ollama instance:
+      # - OLLAMA_HOST=http://your-ollama-server:11434
+    volumes:
+      - ./data:/app/data
+      - ./repos:/app/repos
+      - ./config.yaml:/app/config.yaml:ro
+      # Mount your SSH key for git operations
+      # - ${SSH_KEY_PATH:-~/.ssh/id_rsa}:/etc/deploy-api/ssh-key:ro
+      # For local testing without SSH, we use file:// repos
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+# Note: Ollama should be run externally, for example:
+#   ollama serve
+# Or on a separate powerful server your team uses
+# Configure the URL in config.yaml or via OLLAMA_HOST env var

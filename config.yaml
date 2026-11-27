@@ -1,0 +1,107 @@
+# Deploy API Configuration Template
+# Copy to config.local.yaml for local development or set via environment variables
+
+server:
+  port: 8080
+  api_key: ""  # Set via DEPLOY_API_KEY env var
+
+database:
+  path: "./data/deploy.db"
+
+git:
+  ssh_key_path: ""  # Path to SSH key for git operations
+  author_name: "deploy-api"
+  author_email: "deploy-api@example.com"
+
+kustomize:
+  binary_path: "kustomize"  # Path to kustomize binary
+
+# LLM Configuration - optional, for risk analysis and changelog generation
+llm:
+  type: ""  # "cloudflare", "gemini", "ollama", or empty to disable
+  api_key: ""  # API key for the provider
+  base_url: ""  # Provider-specific base URL (e.g., Cloudflare account ID)
+  model: ""  # Model name
+  options:
+    max_tokens: "60000"
+
+# Webhook Configuration - optional notifications for deployment events
+webhook:
+  urls: []
+  timeout: 30
+  max_retries: 3
+  retry_backoff: 5
+  # Reset runners call back here, so this must be reachable from the runner host.
+  base_url: "${GONDOLA_BASE_URL}"
+
+# Environment hierarchy for changelog comparison baselines
+environments:
+  staging:
+    baseline: prod
+    # Reset gate: after an experiment branch has run here, the next deploy of a
+    # different branch is parked until the reset runner reports back.
+    reset:
+      enabled: false
+      # Full URL of your reset runner, including any token. Only ${VAR} is
+      # substituted here, never ${VAR:-default}.
+      webhook_url: "${STAGING_RESET_WEBHOOK_URL}"  # falls back to webhook.urls
+      timeout: 1800       # seconds before an unanswered reset is failed
+      auto_deploy: true   # run the parked deploy once the reset completes
+  prod:
+    baseline: prod
+  newprod:
+    baseline: newprod
+
+repos:
+  # ArgoCD manifest repositories (type: argocd)
+  # These repos receive kustomize edits during deployments
+  argocd-staging:
+    url: "/path/to/kubernetes-staging"
+    type: argocd
+    environment: staging
+    branch: main
+
+  argocd-prod:
+    url: "/path/to/kubernetes-prod"
+    type: argocd
+    environment: prod
+    branch: main
+
+  # Application source repositories (type: application)
+  # These repos are used for changelog extraction
+  # NOTE: deployment config is REQUIRED - no auto-discovery fallback
+  # Use "deployments" (per-env) or "deployment" (single fallback for all envs)
+
+  # Example 1: Per-environment deployment config (RECOMMENDED)
+  # Single repo entry with different configs per environment
+  app-core-api:
+    url: "git@github.com:yourorg/core-api.git"
+    type: application
+    branch: main
+    environments: [staging, prod]
+    deployments:
+      staging:
+        strategy: kustomize
+        base_path: custom/core-api
+        overlay_pattern: "*"  # Flat structure: includes base_path itself
+      prod:
+        strategy: kustomize
+        base_path: custom/core-api
+        overlays:
+          - name: api
+            path: overlay-api
+          - name: api-pvt
+            path: overlay-api-pvt
+          - name: crontab
+            path: overlay-crontab
+
+  # Example 2: Simple single-overlay app (same config for all envs)
+  # Uses legacy "deployment" field as fallback
+  app-simple-service:
+    url: "git@github.com:yourorg/simple-service.git"
+    type: application
+    branch: main
+    environments: [staging, prod]
+    deployment:
+      strategy: kustomize
+      base_path: custom/simple-service

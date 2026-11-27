@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#1e293b"/>
+      <stop offset="1" stop-color="#0b1120"/>
+    </radialGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Full bleed: chat apps crop avatars to a circle, so the mark stays inside it -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <g transform="translate(256 256) scale(1.66) translate(-135 -155)">
+    <path d="M 230 80 L 130 80 C 70 80, 40 115, 40 155 C 40 195, 70 230, 130 230 L 205 230 C 220 230, 230 220, 230 205 L 230 180 C 230 165, 220 155, 205 155 L 140 155"
+          fill="none" stroke="#e2e8f0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="210" cy="80" r="13" fill="#38bdf8" stroke="#0f172a" stroke-width="4"/>
+    <circle cx="40" cy="155" r="13" fill="#a78bfa" stroke="#0f172a" stroke-width="4"/>
+    <circle cx="180" cy="230" r="13" fill="#fbbf24" stroke="#0f172a" stroke-width="4"/>
+    <circle cx="140" cy="155" r="15" fill="#34d399" stroke="#0f172a" stroke-width="4"/>
+
+    <circle cx="62.5" cy="102.5" r="9" fill="#ffffff" stroke="#0f172a" stroke-width="3" filter="url(#glow)"/>
+  </g>
+</svg>
